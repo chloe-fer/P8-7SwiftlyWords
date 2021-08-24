@@ -127,6 +127,12 @@ class ViewController: UIViewController {
                 let frame = CGRect(x: column * width, y: row * height, width: width, height: height)
                 letterButton.frame = frame
                 
+                
+                // Challenge 1: Add border to buttons
+                letterButton.layer.cornerRadius = 12
+                letterButton.layer.borderWidth = 0.5
+                letterButton.layer.borderColor = UIColor.gray.cgColor
+                
                 buttonsView.addSubview(letterButton)
                 letterButtons.append(letterButton)
             }
@@ -169,7 +175,23 @@ class ViewController: UIViewController {
                 present(ac, animated: true)
                 
             }
+        } else {
+            
+            // Challenge 2: Show alert for incorrect guess
+            let ac = UIAlertController(title: "Incorrect", message: "Try again!", preferredStyle: .alert)
+            ac.addAction(UIAlertAction(title: "OK", style: .default, handler: resetButtons))
+            present(ac, animated: true)
+            
         }
+    }
+    
+    // Challenge 2: Reset buttons after incorrect guess
+    func resetButtons(action: UIAlertAction) {
+        currentAnswer.text = ""
+        for button in activatedButtons {
+            button.isHidden = false
+        }
+        activatedButtons.removeAll()
     }
     
     func levelUp(action: UIAlertAction) {

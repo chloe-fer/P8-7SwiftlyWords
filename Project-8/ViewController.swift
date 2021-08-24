@@ -18,6 +18,8 @@ class ViewController: UIViewController {
     var activatedButtons = [UIButton]()
     var solutions = [String]()
     
+    var questionCount = 0
+    
     var score = 0 {
         didSet {
             scoreLabel.text = "Score: \(score)"
@@ -168,8 +170,11 @@ class ViewController: UIViewController {
             
             currentAnswer.text = ""
             score += 1
+            questionCount += 1
             
-            if score % 7 == 0 {
+            // Challenge 3: Level up not based on score count
+            //if questionCount == 7 {
+            if checkForPressedButtons() {
                 let ac = UIAlertController(title: "Well done!", message: "Are you ready for the next level?", preferredStyle: .alert)
                 ac.addAction(UIAlertAction(title: "Let's go", style: .default, handler: levelUp))
                 present(ac, animated: true)
@@ -187,11 +192,24 @@ class ViewController: UIViewController {
     
     // Challenge 2: Reset buttons after incorrect guess
     func resetButtons(action: UIAlertAction) {
+        // Challenge 3: Deduct points for an incorrect guess
+        score -= 1
         currentAnswer.text = ""
         for button in activatedButtons {
             button.isHidden = false
         }
         activatedButtons.removeAll()
+    }
+    
+    // Challenge 3: // Challenge 3: Level up not based on score count
+    func checkForPressedButtons() -> Bool {
+
+        for button in letterButtons {
+            if button.isHidden == false {
+                return false
+            }
+        }
+        return true
     }
     
     func levelUp(action: UIAlertAction) {

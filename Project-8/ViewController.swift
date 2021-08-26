@@ -145,7 +145,10 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
         
-        loadLevel()
+        // Day 40: Challenge 2: load and parse level in the background
+        DispatchQueue.global(qos: .userInitiated).async { [weak self] in
+            self?.loadLevel()
+        }
     }
     
     @objc func letterTapped(_ sender: UIButton) {
@@ -167,6 +170,7 @@ class ViewController: UIViewController {
             var splitAnswers = answersLabel.text?.components(separatedBy: "\n")
             splitAnswers?[solutionPosition] = answerText
             answersLabel.text = splitAnswers?.joined(separator: "\n")
+            
             
             currentAnswer.text = ""
             score += 1
@@ -216,7 +220,11 @@ class ViewController: UIViewController {
         level += 1
         
         solutions.removeAll(keepingCapacity: true)
-        loadLevel()
+        
+        // Day 40: Challenge 2: load and parse level in the background
+        DispatchQueue.global(qos: .userInitiated).async { [weak self] in
+            self?.loadLevel()
+        }
         
         for button in letterButtons {
             button.isHidden = false
@@ -233,6 +241,7 @@ class ViewController: UIViewController {
         activatedButtons.removeAll()
     }
     
+    // Day 40: Challenge 2: load and parse level in the background
     func loadLevel() {
         
         var clueString = ""
@@ -262,16 +271,25 @@ class ViewController: UIViewController {
                 }
             }
         }
-        cluesLabel.text = clueString.trimmingCharacters(in: .whitespacesAndNewlines)
-        answersLabel.text = solutionString.trimmingCharacters(in: .whitespaces)
         
-        letterButtons.shuffle()
-        
-        if letterButtons.count == letterBits.count {
-            for i in 0..<letterButtons.count {
-                letterButtons[i].setTitle(letterBits[i], for: .normal)
-            }
+        // Day 40: Challenge 2: UI on main thread
+        DispatchQueue.main.async { [ weak self ] in
+            
+            self?.cluesLabel.text = clueString.trimmingCharacters(in: .whitespacesAndNewlines)
+            self?.answersLabel.text = solutionString.trimmingCharacters(in: .whitespaces)
+            
+            self?.letterButtons.shuffle()
+
+            //if let letterButtons = self?.letterButtons {
+            
+            if self?.letterButtons.count == letterBits.count {
+                for i in 0..<self!.letterButtons.count {
+                    self?.letterButtons[i].setTitle(letterBits[i], for: .normal)
+                    }
+                }
+           // }
         }
+       
     }
 }
 
